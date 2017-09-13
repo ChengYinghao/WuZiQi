@@ -20,5 +20,7 @@ public class MoveGenerator implements BaseMoveGenerator {
                 }
             }
         }
+        //todo
+        return null;
     }
 }
