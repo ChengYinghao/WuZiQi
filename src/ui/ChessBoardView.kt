@@ -3,10 +3,11 @@ package ui
 import javafx.scene.Parent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
+import model.ChessType
 
 class ChessBoardView:Parent(){
 	
-	fun update(chessBoardScanner:(row:Int,column:Int)->ChessType){
+	fun update(chessBoardScanner:(row:Int,column:Int)-> ChessType){
 		children.clear()
 	}
 }

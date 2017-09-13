@@ -1,5 +1,9 @@
 package ui
 
+import javafx.application.Platform
+import javafx.scene.layout.Pane
+import javafx.stage.Stage
+
 
 class ChessBoardUI(val rowCount: Int, val columnCount: Int) {
 	
@@ -16,7 +20,7 @@ class ChessBoardUI(val rowCount: Int, val columnCount: Int) {
 			}
 		}
 	}
-	private fun prepareStage(stage:Stage){
+	private fun prepareStage(stage: Stage){
 	
 	}
 	

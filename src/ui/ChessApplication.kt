@@ -19,7 +19,7 @@ class ChessApplication : Application() {
 					if (value != null) _initCondition.signalAll()
 				}
 			}
-		val instance: ChessApplication
+		private val instance: ChessApplication
 			get() {
 				_initLock.withLock {
 					_instance?.let { return it }
