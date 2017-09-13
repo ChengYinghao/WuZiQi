@@ -1,5 +1,7 @@
 package logic;
 
+import model.ChessType;
+
 public interface BaseEvaluator {
     int evaluate(ChessType[][] board, boolean isWhiteTurn);
 

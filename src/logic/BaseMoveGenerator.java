@@ -1,5 +1,7 @@
 package logic;
 
+import model.ChessType;
+
 import java.util.ArrayList;
 
 public interface BaseMoveGenerator {

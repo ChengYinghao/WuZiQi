@@ -1,5 +1,7 @@
 package logic;
 
+import model.ChessType;
+
 public interface BaseSearchEngine {
     ChessMove searchABestMove(ChessType[][] board, boolean isWhiteTurn);
 
