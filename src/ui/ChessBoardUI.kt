@@ -1,10 +1,5 @@
 package ui
 
-import javafx.application.Platform
-import javafx.scene.Scene
-import javafx.scene.layout.Pane
-import javafx.stage.Stage
-
 
 class ChessBoardUI(val rowCount: Int, val columnCount: Int) {
 	
@@ -16,7 +11,7 @@ class ChessBoardUI(val rowCount: Int, val columnCount: Int) {
 		Platform.runLater {
 			this.stage = Stage().apply {
 				title = "棋盘"
-				scene = Scene()
+				//todo add scene
 				show()
 			}
 		}
@@ -27,9 +22,3 @@ class ChessBoardUI(val rowCount: Int, val columnCount: Int) {
 	
 }
 
-fun <T> Platform.runLater(block: () -> T): T {
-	var re:T? = null
-	Platform.runLater {
-		re=block()
-	}
-}
