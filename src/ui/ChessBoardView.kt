@@ -9,7 +9,7 @@ import javafx.scene.shape.Rectangle
 import model.AbstractChessboard
 import model.ChessType
 
-class ChessboardView(val chessboard: AbstractChessboard) : Pane() {
+class ChessboardView(private val chessboard: AbstractChessboard) : Pane() {
 	
 	
 	init {
