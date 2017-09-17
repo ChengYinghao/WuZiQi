@@ -7,17 +7,35 @@ import model.AbstractChessboard
 
 interface ChessboardUI {
 	
+	/**
+	 * 与UI绑定的棋盘
+	 */
 	val chessboard: AbstractChessboard
+	/**
+	 * 根据与UI绑定的棋盘更新内容
+	 */
 	fun update()
 	
+	/**
+	 * UI窗口是否打开了
+	 */
 	var isShowing: Boolean
+	/**
+	 * 打开UI窗口
+	 */
 	fun show() {
 		isShowing = true
 	}
+	/**
+	 * 关闭UI窗口
+	 */
 	fun close() {
 		isShowing = false
 	}
 	
+	/**
+	 * 用户对棋盘的落子操作的侦听
+	 */
 	var onMovementListener: ((row: Int, column: Int) -> Unit)?
 }
 

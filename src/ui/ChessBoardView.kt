@@ -11,7 +11,6 @@ import model.ChessType
 
 class ChessboardView(private val chessboard: AbstractChessboard) : Pane() {
 	
-	
 	init {
 		this.setOnMouseClicked(this::onClick)
 	}
