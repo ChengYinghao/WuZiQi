@@ -1,10 +1,10 @@
 package ui
 
-import model.AbstractChessboard
-import model.ChessType
+import logic.chessboard.ChessType
+import logic.chessboard.Chessboard
 
 fun main(args: Array<String>) {
-	val chessboard = object : AbstractChessboard {
+	val chessboard = object : Chessboard {
 		override val rowCount: Int = 10
 		override val columnCount: Int = 10
 		override fun get(row: Int, column: Int): ChessType {

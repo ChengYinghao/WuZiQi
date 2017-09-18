@@ -1,6 +1,6 @@
-package logic;
+package logic.ai;
 
-import model.ChessType;
+import logic.chessboard.ChessType;
 
 public interface BaseEvaluator {
     int evaluate(ChessType[][] board, ChessPos pos, boolean isWhiteTurn);

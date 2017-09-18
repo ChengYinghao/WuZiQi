@@ -6,10 +6,10 @@ import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Line
 import javafx.scene.shape.Rectangle
-import model.AbstractChessboard
-import model.ChessType
+import logic.chessboard.ChessType
+import logic.chessboard.Chessboard
 
-class ChessboardView(private val chessboard: AbstractChessboard) : Pane() {
+class ChessboardView(private val chessboard: Chessboard) : Pane() {
 	
 	init {
 		this.setOnMouseClicked(this::onClick)

@@ -3,14 +3,14 @@ package ui
 import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.stage.Stage
-import model.AbstractChessboard
+import logic.chessboard.Chessboard
 
 interface ChessboardUI {
 	
 	/**
 	 * 与UI绑定的棋盘
 	 */
-	val chessboard: AbstractChessboard
+	val chessboard: Chessboard
 	/**
 	 * 根据与UI绑定的棋盘更新内容
 	 */
@@ -39,7 +39,7 @@ interface ChessboardUI {
 	var onMovementListener: ((row: Int, column: Int) -> Unit)?
 }
 
-class ZKLChessboardUI(override val chessboard: AbstractChessboard) : ChessboardUI {
+class ZKLChessboardUI(override val chessboard: Chessboard) : ChessboardUI {
 	
 	//visual
 	init {
