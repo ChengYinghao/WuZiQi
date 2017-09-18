@@ -3,13 +3,13 @@ package logic;
 import model.ChessType;
 
 public interface BaseEvaluator {
-    int evaluate(ChessType[][] board, boolean isWhiteTurn);
+    int evaluate(ChessType[][] board, ChessPos pos, boolean isWhiteTurn);
 
-    int analysisHorizon(ChessType[][] board, int row, int column);
+    void analysisHorizon(ChessType[][] board, ChessPos pos);
 
-    int analysisVertical(ChessType[][] board, int row, int column);
+    void analysisVertical(ChessType[][] board, ChessPos pos);
 
-    int analysisLeftOblique(ChessType[][] board, int row, int column);
+    void analysisLeftOblique(ChessType[][] board, ChessPos pos);
 
-    int analysisRightOblique(ChessType[][] board, int row, int column);
+    void analysisRightOblique(ChessType[][] board, ChessPos pos);
 }

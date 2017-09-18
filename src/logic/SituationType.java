@@ -1,5 +1,5 @@
 package logic;
 
 public enum SituationType {
-    STWO, STHREE, SFOUR, TWO, THREE, FOUR, FIVE, MEANINGLESS
+    STWO, STHREE, SFOUR, TWO, THREE, FOUR, FIVE, UNANALYZED, ANALYZED
 }

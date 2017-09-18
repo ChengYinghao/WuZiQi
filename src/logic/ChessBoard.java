@@ -1,10 +1,10 @@
 package logic;
 
-import model.AbstractChessBoard;
+import model.AbstractChessboard;
 import model.ChessType;
 import org.jetbrains.annotations.NotNull;
 
-public class ChessBoard implements AbstractChessBoard {
+public class ChessBoard implements AbstractChessboard {
     protected static final int ROW_COUNT = 15;
     protected static final int COLUMN_COUNT = 15;
     boolean isWhiteTurn = false;
