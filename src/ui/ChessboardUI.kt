@@ -2,6 +2,8 @@ package ui
 
 import javafx.application.Platform
 import javafx.scene.Scene
+import javafx.scene.control.Label
+import javafx.scene.layout.GridPane
 import javafx.stage.Stage
 import logic.chessboard.Chessboard
 
@@ -11,12 +13,14 @@ interface ChessboardUI {
 	 * UI窗口是否打开了
 	 */
 	var isShowing: Boolean
+	
 	/**
 	 * 打开UI窗口
 	 */
 	fun show() {
 		isShowing = true
 	}
+	
 	/**
 	 * 关闭UI窗口
 	 */
@@ -29,12 +33,16 @@ interface ChessboardUI {
 	 */
 	var onMovementListener: ((row: Int, column: Int) -> Unit)?
 	
-	var message:String
+	/**
+	 * 显示的信息
+	 */
+	var message: String
 	
 	/**
 	 * 与UI绑定的棋盘
 	 */
 	val chessboard: Chessboard
+	
 	/**
 	 * 根据与UI绑定的棋盘更新内容
 	 */
@@ -44,7 +52,6 @@ interface ChessboardUI {
 
 class ZKLChessboardUI(override val chessboard: Chessboard) : ChessboardUI {
 	
-	
 	//visual
 	init {
 		ChessApplication.launch()
@@ -52,17 +59,24 @@ class ZKLChessboardUI(override val chessboard: Chessboard) : ChessboardUI {
 	
 	private var stage: Stage? = null
 	private var chessboardView: ChessboardView? = null
+	private var titleView: Label? = null
 	@Synchronized private fun initStage(): Stage {
-		val chessboardView = ChessboardView(chessboard)
+		val titleView = Label().also { this.titleView = it }
+		titleView.text = "(nothing to show)"
+		
+		val chessboardView = ChessboardView(chessboard).also { this.chessboardView = it }
 		chessboardView.onMovementListener = this.onMovementListener
 		
-		val stage = Stage()
+		val rootPane = GridPane()
+		rootPane.vgap = 10.0
+		rootPane.hgap = 10.0
+		rootPane.add(titleView, 0, 0)
+		rootPane.add(chessboardView, 0, 1)
+		
+		val stage = Stage().also { this.stage = it }
 		stage.title = "棋盘"
 		stage.scene = Scene(chessboardView)
 		stage.isResizable = false
-		
-		this.chessboardView=chessboardView
-		this.stage=stage
 		
 		return stage
 	}
@@ -87,11 +101,9 @@ class ZKLChessboardUI(override val chessboard: Chessboard) : ChessboardUI {
 	
 	override var message: String = ""
 		set(value) {
-			//todo make visual title
-			println(value)
 			field = value
+			Platform.runLater { titleView?.text = value }
 		}
-	
 	
 	//logic
 	override fun update() {

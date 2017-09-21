@@ -9,7 +9,7 @@ import javafx.scene.shape.Rectangle
 import logic.chessboard.ChessType
 import logic.chessboard.Chessboard
 
-class ChessboardView(private val chessboard: Chessboard) : Pane() {
+class ChessboardView() : Pane() {
 	
 	init {
 		this.setOnMouseClicked(this::onClick)
@@ -47,11 +47,10 @@ class ChessboardView(private val chessboard: Chessboard) : Pane() {
 				val x = edgeSize + boxSize * column
 				val y = edgeSize + boxSize * row
 				
-				when (chessboard.get(row, column)) {
+				when (chessboard!!.get(row, column)) {
 					ChessType.BLACK -> children += Circle(x, y, radius, Color.BLACK)
 					ChessType.WHITE -> children += Circle(x, y, radius, Color.WHITE)
-					else -> {
-					}
+					else -> { }
 				}
 				
 			}
@@ -77,6 +76,15 @@ class ChessboardView(private val chessboard: Chessboard) : Pane() {
 	
 	
 	//logic
-	private val rowCount get() = chessboard.rowCount
-	private val columnCount get() = chessboard.columnCount
+	constructor(chessboard: Chessboard):this(){
+		this.chessboard=chessboard
+	}
+	var chessboard: Chessboard? = null
+		set(value) {
+			field = value
+			update()
+		}
+	private val rowCount get() = chessboard?.rowCount ?: 0
+	private val columnCount get() = chessboard?.columnCount ?: 0
+	
 }
