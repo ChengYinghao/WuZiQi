@@ -37,7 +37,8 @@ interface Chessboard {
 	 */
 	var holdingChess:ChessType
 	/**
-	 * 落子
+	 * 落子。
+	 * 若落子成功，会交换棋手
 	 * @param row 落子的行数
 	 * @param column 落子的列数
 	 * @return 落子的结果（是否合法、是否获胜等）
@@ -79,7 +80,7 @@ interface Chessboard {
 	fun checkDraw():Boolean
 	
 	/**
-	 * 不依赖某个落子，检查当前棋局状态
+	 * 不基于某个棋子，检查当前棋局状态。
 	 * 注意则此方法在同时有多个玩家同时胜利的情况下不一定能准确判断
 	 * @return 当前棋局的状态
 	 */
