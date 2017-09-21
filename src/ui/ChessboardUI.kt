@@ -8,15 +8,6 @@ import logic.chessboard.Chessboard
 interface ChessboardUI {
 	
 	/**
-	 * 与UI绑定的棋盘
-	 */
-	val chessboard: Chessboard
-	/**
-	 * 根据与UI绑定的棋盘更新内容
-	 */
-	fun update()
-	
-	/**
 	 * UI窗口是否打开了
 	 */
 	var isShowing: Boolean
@@ -37,9 +28,22 @@ interface ChessboardUI {
 	 * 用户对棋盘的落子操作的侦听
 	 */
 	var onMovementListener: ((row: Int, column: Int) -> Unit)?
+	
+	var message:String
+	
+	/**
+	 * 与UI绑定的棋盘
+	 */
+	val chessboard: Chessboard
+	/**
+	 * 根据与UI绑定的棋盘更新内容
+	 */
+	fun update()
+	
 }
 
 class ZKLChessboardUI(override val chessboard: Chessboard) : ChessboardUI {
+	
 	
 	//visual
 	init {
@@ -78,6 +82,13 @@ class ZKLChessboardUI(override val chessboard: Chessboard) : ChessboardUI {
 	override var onMovementListener: ((row: Int, column: Int) -> Unit)? = null
 		set(value) {
 			chessboardView?.onMovementListener = value
+			field = value
+		}
+	
+	override var message: String = ""
+		set(value) {
+			//todo make visual title
+			println(value)
 			field = value
 		}
 	
