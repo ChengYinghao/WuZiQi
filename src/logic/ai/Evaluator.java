@@ -31,7 +31,7 @@ public class Evaluator implements BaseEvaluator {
 
 
     @Override
-    public int evaluate(ChessType[][] board, ChessPos pos, boolean isWhiteTurn) {
+    public int evaluate(ChessType[][] board, boolean isWhiteTurn) {
         int WValue = 0;
         int BValue = 0;
         clearAnalysis();

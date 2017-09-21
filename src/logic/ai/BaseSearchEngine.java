@@ -11,11 +11,11 @@ public interface BaseSearchEngine {
 
     void setMoveGenerator(BaseMoveGenerator moveGenerator);
 
-    boolean isGameOver(ChessType[][] board, int depth);
+    int isGameOver(ChessType[][] board, int depth);
 
-    ChessType[][] makeMove(ChessType[][] board, ChessMove chessMove);
+    void makeMove(ChessMove chessMove, ChessType type);
 
-    ChessType[][] unMakeMove(ChessType[][] board, ChessMove chessMove);
+    void unMakeMove(ChessMove chessMove);
 
     int NegaSearch(int alpha, int beta, int depth);
 }
