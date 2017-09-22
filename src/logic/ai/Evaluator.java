@@ -6,26 +6,10 @@ import logic.chessboard.ChessType;
 public class Evaluator implements BaseEvaluator {
     public static final int COLUMN_COUNT = 15;
     public static final int ROW_COUNT = 15;
-    
+
     //位置价值表
-    int[][] posValue = {
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-        {0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0},
-        {0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0},
-        {0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2, 1, 0},
-        {0, 1, 2, 3, 4, 5, 5, 5, 5, 5, 4, 3, 2, 1, 0},
-        {0, 1, 2, 3, 4, 5, 6, 6, 6, 5, 4, 3, 2, 1, 0},
-        {0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0},
-        {0, 1, 2, 3, 4, 5, 6, 6, 6, 5, 4, 3, 2, 1, 0},
-        {0, 1, 2, 3, 4, 5, 5, 5, 5, 5, 4, 3, 2, 1, 0},
-        {0, 1, 2, 3, 4, 4, 4, 4, 4, 4, 4, 3, 2, 1, 0},
-        {0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 1, 0},
-        {0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0},
-        {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    };
-    
+    int[][] posValue = getPosValue(ROW_COUNT, COLUMN_COUNT);
+
     SituationType[][][] analysis = new SituationType[ROW_COUNT][ROW_COUNT][4];
     int[][] analysisRecord = new int[2][9];
 
@@ -527,5 +511,20 @@ public class Evaluator implements BaseEvaluator {
             lineRecord[i] = SituationType.ANALYZED;
         }
         return lineRecord;
+    }
+
+    public int[][] getPosValue(int rowCount, int columnCount) {
+        int[][] posValue = new int[rowCount][columnCount];
+        for (int i = 0; i < rowCount; i++) {
+            for (int j = 0; j < columnCount; j++) {
+                int minimum = Math.min(i, j);
+                int value = Math.min(rowCount - i - 1, columnCount - i - 1);
+                if (value < minimum) {
+                    minimum = value;
+                }
+                posValue[i][j] = minimum;
+            }
+        }
+        return posValue;
     }
 }
