@@ -75,7 +75,7 @@ class ZKLChessboardUI(override val chessboard: Chessboard) : ChessboardUI {
 		
 		val stage = Stage().also { this.stage = it }
 		stage.title = "棋盘"
-		stage.scene = Scene(chessboardView)
+		stage.scene = Scene(rootPane)
 		stage.isResizable = false
 		
 		return stage

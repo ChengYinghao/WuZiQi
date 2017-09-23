@@ -7,7 +7,7 @@ internal class CYHChessboardTest {
 	
 	@Test
 	fun emptyAfterInitialization() {
-		val chessboard = CYHChessboard()
+		val chessboard = CYHChessboard(15, 15)
 		for (row in 0 until chessboard.rowCount) {
 			for (column in 0 until chessboard.columnCount) {
 				val chess = chessboard[row, column]
@@ -19,7 +19,7 @@ internal class CYHChessboardTest {
 	
 	@Test
 	fun setter() {
-		val chessboard = CYHChessboard()
+		val chessboard = CYHChessboard(15, 15)
 		repeat(1000) {
 			val row = randomInt(chessboard.rowCount)
 			val column = randomInt(chessboard.columnCount)
@@ -34,7 +34,7 @@ internal class CYHChessboardTest {
 	
 	@Test
 	fun clear() {
-		val chessboard = CYHChessboard()
+		val chessboard = CYHChessboard(15, 15)
 		repeat(100) {
 			val row = randomInt(chessboard.rowCount)
 			val column = randomInt(chessboard.columnCount)

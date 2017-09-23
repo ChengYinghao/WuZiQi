@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class SearchEngine implements BaseSearchEngine {
     int maxSearchDepth = 10;
-    CYHChessboard cyhChessboard = new CYHChessboard();
+    CYHChessboard cyhChessboard = new CYHChessboard(15, 15);
     BaseEvaluator evaluator;
     BaseMoveGenerator baseMoveGenerator;
     ChessMove bestMove;

@@ -13,6 +13,8 @@ class ChessboardView() : Pane() {
 	
 	init {
 		this.setOnMouseClicked(this::onClick)
+		this.width = 500.0
+		this.height = 500.0
 	}
 	
 	//ui

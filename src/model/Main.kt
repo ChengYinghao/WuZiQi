@@ -9,8 +9,8 @@ import ui.ZKLChessboardUI
 
 fun main(args: Array<String>) {
 	
-	val chessBoard: Chessboard = CYHChessboard()
-	
+	val chessBoard: Chessboard = CYHChessboard(15, 15)
+
 	val ui: ChessboardUI = ZKLChessboardUI(chessBoard)
 	ui.onMovementListener = {row, column ->
 		val movementResult = chessBoard.makeMovement(row, column)
@@ -23,10 +23,12 @@ fun main(args: Array<String>) {
 					is GameState.Draw -> ui.message="Game Over! Nobody win..."
 					is GameState.Playing -> ui.message="${newGameState.holdingChess}"
 				}
+				ui.update()
 			}
 		}
 	}
 	ui.message = "BLACK first"
+	ui.update()
 	ui.show()
 	
 }
