@@ -20,12 +20,13 @@ fun main(args: Array<String>) {
 				val newGameState = movementResult.newGameState
 				when(newGameState){
 					is GameState.Win -> ui.message="${newGameState.winner.name} win !!!"
-					is GameState.Draw -> ui.message="Draw!!!"
+					is GameState.Draw -> ui.message="Game Over! Nobody win..."
 					is GameState.Playing -> ui.message="${newGameState.holdingChess}"
 				}
 			}
 		}
 	}
 	ui.message = "BLACK first"
+	ui.show()
 	
 }

@@ -99,7 +99,7 @@ class ZKLChessboardUI(override val chessboard: Chessboard) : ChessboardUI {
 			field = value
 		}
 	
-	override var message: String = ""
+	override var message: String = "(nothing to show)"
 		set(value) {
 			field = value
 			Platform.runLater { titleView?.text = value }
