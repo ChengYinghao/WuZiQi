@@ -5,7 +5,7 @@ import logic.chessboard.ChessType;
 
 import java.util.ArrayList;
 
-public class searchEngiine implements BaseSearchEngine {
+public class SearchEngine implements BaseSearchEngine {
     int maxSearchDepth = 10;
     CYHChessboard cyhChessboard = new CYHChessboard();
     BaseEvaluator evaluator;

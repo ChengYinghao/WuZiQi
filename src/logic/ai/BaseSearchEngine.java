@@ -2,7 +2,13 @@ package logic.ai;
 
 import logic.chessboard.ChessType;
 
-public interface BaseSearchEngine {
+interface BaseSearchEngine {
+    /**
+     * 根据输入的棋盘和到谁走返回推荐电脑走的一步
+     * @param board
+     * @param isWhiteTurn
+     * @return
+     */
     ChessMove searchABestMove(ChessType[][] board, boolean isWhiteTurn);
 
     void setSearch(int depth);

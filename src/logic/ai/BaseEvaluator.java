@@ -2,7 +2,7 @@ package logic.ai;
 
 import logic.chessboard.ChessType;
 
-public interface BaseEvaluator {
+interface BaseEvaluator {
     int evaluate(ChessType[][] board, boolean isWhiteTurn);
 
     void analysisHorizon(ChessType[][] board, ChessPos pos);
