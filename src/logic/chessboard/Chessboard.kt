@@ -43,60 +43,7 @@ interface Chessboard {
 	 * @param column 落子的列数
 	 * @return 落子的结果（是否合法、是否获胜等）
 	 */
-	fun makeMovement(row: Int, column: Int): MovementResult {
-		//如果原来有棋子了，就不能再往上面下
-		if (this[row, column] != ChessType.NONE) return MovementResult.Illegal()
-		
-		//往上面放棋子
-		val oldHoldingChess = holdingChess
-		this[row, column] = oldHoldingChess
-		
-		//交换棋手
-		val newHoldingChess = oldHoldingChess.opposite()
-		holdingChess = newHoldingChess
-		
-		//判断局势
-		val win = checkMovementWin(row, column)
-		val draw = !win && checkDraw()
-		val newGameState = when {
-			win -> GameState.Win(oldHoldingChess)
-			draw -> GameState.Draw()
-			else -> GameState.Playing(newHoldingChess)
-		}
-		
-		return MovementResult.Legal(newGameState)
-	}
-	/**
-	 * 检查是否因为某个落子而获胜
-	 * @param row 落子的行数
-	 * @param column 落子的列数
-	 * @return 是否因为该落子而胜利
-	 */
-	fun checkMovementWin(row: Int, column: Int):Boolean
-	/**
-	 * 检查棋盘是否下满了（平手）。
-	 * @return 棋盘是否下满了（平手）。
-	 */
-	fun checkDraw():Boolean
-	
-	/**
-	 * 不基于某个棋子，检查当前棋局状态。
-	 * 注意则此方法在同时有多个玩家同时胜利的情况下不一定能准确判断
-	 * @return 当前棋局的状态
-	 */
-	fun checkGameState():GameState{
-		var draw=true
-		for (row in 0 until rowCount) {
-			for (column in 0 until columnCount) {
-				val chess = this[row, column]
-				//检查该棋子位是否赢了
-				if(checkMovementWin(row, column)) return GameState.Win(chess)
-				//检查是否下满棋盘（平局）了
-				draw = draw && chess != ChessType.NONE
-			}
-		}
-		return if (draw) GameState.Draw() else GameState.Playing(holdingChess)
-	}
+	fun makeMovement(row: Int, column: Int): MovementResult
 	
 }
 

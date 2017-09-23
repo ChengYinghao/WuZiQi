@@ -4,10 +4,10 @@ import logic.ai.Evaluator;
 import org.jetbrains.annotations.NotNull;
 
 public class CYHChessboard implements Chessboard {
-    public static final int DEFAULT_COLUMN_COUNT = Evaluator.COLUMN_COUNT;
-    public static final int DEFAULT_ROW_COUNT = Evaluator.ROW_COUNT;
+    private static final int DEFAULT_COLUMN_COUNT = Evaluator.COLUMN_COUNT;
+    private static final int DEFAULT_ROW_COUNT = Evaluator.ROW_COUNT;
 
-    boolean isWhiteTurn = false;
+    private boolean isWhiteTurn = false;
 
     //棋盘
     public ChessType[][] board = new ChessType[Evaluator.COLUMN_COUNT][Evaluator.ROW_COUNT];
@@ -25,8 +25,7 @@ public class CYHChessboard implements Chessboard {
     @NotNull
     @Override
     public ChessType get(int row, int column) {
-        ChessType type = board[row][column];
-        return type;
+        return board[row][column];
     }
 
     @Override
@@ -49,8 +48,54 @@ public class CYHChessboard implements Chessboard {
         isWhiteTurn = chessType != ChessType.BLACK;
     }
 
+
     @Override
-    public boolean checkMovementWin(int row, int column) {
+    public void clear() {
+        for (int i = 0; i < DEFAULT_ROW_COUNT; i++) {
+            for (int j = 0; j < DEFAULT_COLUMN_COUNT; j++) {
+                board[i][j] = ChessType.NONE;
+            }
+        }
+    }
+
+    @NotNull
+    @Override
+    public MovementResult makeMovement(int row, int column) {
+        //如果原来有棋子了，就不能再往上面下
+        if (this.get(row, column) != ChessType.NONE) return new MovementResult.Illegal();
+
+        //往上面放棋子
+        ChessType oldHoldingChess = getHoldingChess();
+        this.set(row, column, oldHoldingChess);
+
+        //交换棋手
+        ChessType newHoldingChess = oldHoldingChess.opposite();
+        setHoldingChess(newHoldingChess);
+
+        //判断局势
+        boolean win = checkMovementWin(row, column);
+        boolean draw = !win && checkDraw();
+        GameState newGameState;
+        if (win) {
+            newGameState = new GameState.Win(oldHoldingChess);
+        } else if (draw) {
+            newGameState = new GameState.Draw();
+        } else {
+            newGameState = new GameState.Playing(newHoldingChess);
+        }
+
+        return new MovementResult.Legal(newGameState);
+
+    }
+
+    /**
+     * 检查是否因为某个落子而获胜
+     *
+     * @param row    落子的行数
+     * @param column 落子的列数
+     * @return 是否因为该落子而胜利
+     */
+    private boolean checkMovementWin(int row, int column) {
         int count = 1;
         //检查横向左边
         for (int i = 1; i < 5; i++) {
@@ -139,8 +184,12 @@ public class CYHChessboard implements Chessboard {
         return count >= 5;
     }
 
-    @Override
-    public boolean checkDraw() {
+    /**
+     * 检查棋盘是否下满了（平手）。
+     *
+     * @return 棋盘是否下满了（平手）。
+     */
+    private boolean checkDraw() {
         boolean isTie = true;
         for (int i = 0; i < DEFAULT_ROW_COUNT; i++) {
             for (int j = 0; j < DEFAULT_COLUMN_COUNT; j++) {
