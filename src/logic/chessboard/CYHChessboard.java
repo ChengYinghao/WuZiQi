@@ -1,25 +1,39 @@
 package logic.chessboard;
 
-import logic.ai.Evaluator;
 import org.jetbrains.annotations.NotNull;
 
 public class CYHChessboard implements Chessboard {
-    private static final int DEFAULT_COLUMN_COUNT = Evaluator.COLUMN_COUNT;
-    private static final int DEFAULT_ROW_COUNT = Evaluator.ROW_COUNT;
-
+    private final int ROW_COUNT;
+    private final int COLUMN_COUNT;
+    public ChessType[][] board;
     private boolean isWhiteTurn = false;
 
+    public CYHChessboard(int rowCount, int columnCount) {
+        ROW_COUNT = rowCount;
+        COLUMN_COUNT = columnCount;
+        board = new ChessType[ROW_COUNT][COLUMN_COUNT];
+        initChessboard();
+    }
+
+    private void initChessboard() {
+        for (int row = 0; row < ROW_COUNT; row++) {
+            for (int column = 0; column < COLUMN_COUNT; column++) {
+                board[row][column] = ChessType.NONE;
+            }
+        }
+    }
+
     //棋盘
-    public ChessType[][] board = new ChessType[Evaluator.COLUMN_COUNT][Evaluator.ROW_COUNT];
+
 
     @Override
     public int getRowCount() {
-        return DEFAULT_ROW_COUNT;
+        return ROW_COUNT;
     }
 
     @Override
     public int getColumnCount() {
-        return DEFAULT_COLUMN_COUNT;
+        return COLUMN_COUNT;
     }
 
     @NotNull
@@ -51,8 +65,8 @@ public class CYHChessboard implements Chessboard {
 
     @Override
     public void clear() {
-        for (int i = 0; i < DEFAULT_ROW_COUNT; i++) {
-            for (int j = 0; j < DEFAULT_COLUMN_COUNT; j++) {
+        for (int i = 0; i < ROW_COUNT; i++) {
+            for (int j = 0; j < COLUMN_COUNT; j++) {
                 board[i][j] = ChessType.NONE;
             }
         }
@@ -108,7 +122,7 @@ public class CYHChessboard implements Chessboard {
         }
         //检查横向右边
         for (int i = 1; i < 5; i++) {
-            if (column + i < DEFAULT_COLUMN_COUNT) {
+            if (column + i < COLUMN_COUNT) {
                 if (board[row][column + i] != board[row][column]) {
                     break;
                 }
@@ -130,7 +144,7 @@ public class CYHChessboard implements Chessboard {
         }
         //检查纵向下边
         for (int i = 1; i < 5; i++) {
-            if (row + i < DEFAULT_ROW_COUNT) {
+            if (row + i < ROW_COUNT) {
                 if (board[row + i][column] != board[row][column]) {
                     break;
                 }
@@ -152,7 +166,7 @@ public class CYHChessboard implements Chessboard {
         }
         //检查右下角
         for (int i = 1; i < 5; i++) {
-            if (row + i < DEFAULT_ROW_COUNT && column + i < DEFAULT_COLUMN_COUNT) {
+            if (row + i < ROW_COUNT && column + i < COLUMN_COUNT) {
                 if (board[row + i][column + i] != board[row][column]) {
                     break;
                 }
@@ -165,7 +179,7 @@ public class CYHChessboard implements Chessboard {
         count = 1;
         //检查左下角
         for (int i = 1; i < 5; i++) {
-            if (row + i < DEFAULT_ROW_COUNT && column - i >= 0) {
+            if (row + i < ROW_COUNT && column - i >= 0) {
                 if (board[row + i][column - i] != board[row][column]) {
                     break;
                 }
@@ -174,7 +188,7 @@ public class CYHChessboard implements Chessboard {
         }
         //检查右上角
         for (int i = 1; i < 5; i++) {
-            if (row - i >= 0 && column + i < DEFAULT_COLUMN_COUNT) {
+            if (row - i >= 0 && column + i < COLUMN_COUNT) {
                 if (board[row - i][column + i] != board[row][column]) {
                     break;
                 }
@@ -191,9 +205,9 @@ public class CYHChessboard implements Chessboard {
      */
     private boolean checkDraw() {
         boolean isTie = true;
-        for (int i = 0; i < DEFAULT_ROW_COUNT; i++) {
-            for (int j = 0; j < DEFAULT_COLUMN_COUNT; j++) {
-                if (board[i][j] == ChessType.NONE) {
+        for (int row = 0; row < ROW_COUNT; row++) {
+            for (int column = 0; column < COLUMN_COUNT; column++) {
+                if (board[row][column] == ChessType.NONE) {
                     isTie = false;
                 }
             }

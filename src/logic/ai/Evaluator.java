@@ -1,16 +1,18 @@
 package logic.ai;
 
+import logic.chessboard.CYHChessboard;
 import logic.chessboard.ChessType;
 
 
 public class Evaluator implements BaseEvaluator {
-    public static final int COLUMN_COUNT = 15;
-    public static final int ROW_COUNT = 15;
+    CYHChessboard cyhChessboard = new CYHChessboard(15, 15);
+    final int ROW_COUNT = cyhChessboard.getRowCount();
+    final int COLUMN_COUNT = cyhChessboard.getColumnCount();
 
     //位置价值表
     int[][] posValue = getPosValue(ROW_COUNT, COLUMN_COUNT);
 
-    SituationType[][][] analysis = new SituationType[ROW_COUNT][ROW_COUNT][4];
+    SituationType[][][] analysis = new SituationType[ROW_COUNT][COLUMN_COUNT][4];
     int[][] analysisRecord = new int[2][9];
 
 
@@ -20,29 +22,29 @@ public class Evaluator implements BaseEvaluator {
         int BValue = 0;
         clearAnalysis();
         clearAnalysisRecord();
-        for (int i = 0; i < ROW_COUNT; i++) {
-            for (int j = 0; j < COLUMN_COUNT; j++) {
-                if (board[i][j] != ChessType.NONE) {
-                    if (analysis[i][j][0] == SituationType.UNANALYZED) {
-                        analysisHorizon(board, new ChessPos(i, j));
+        for (int row = 0; row < ROW_COUNT; row++) {
+            for (int column = 0; column < COLUMN_COUNT; column++) {
+                if (board[row][column] != ChessType.NONE) {
+                    if (analysis[row][column][0] == SituationType.UNANALYZED) {
+                        analysisHorizon(board, new ChessPos(row, column));
                     }
-                    if (analysis[i][j][1] == SituationType.UNANALYZED) {
-                        analysisVertical(board, new ChessPos(i, j));
+                    if (analysis[row][column][1] == SituationType.UNANALYZED) {
+                        analysisVertical(board, new ChessPos(row, column));
                     }
-                    if (analysis[i][j][2] == SituationType.UNANALYZED) {
-                        analysisLeftOblique(board, new ChessPos(i, j));
+                    if (analysis[row][column][2] == SituationType.UNANALYZED) {
+                        analysisLeftOblique(board, new ChessPos(row, column));
                     }
-                    if (analysis[i][j][3] == SituationType.UNANALYZED) {
-                        analysisRightOblique(board, new ChessPos(i, j));
+                    if (analysis[row][column][3] == SituationType.UNANALYZED) {
+                        analysisRightOblique(board, new ChessPos(row, column));
                     }
                 }
             }
         }
-        for (int i = 0; i < ROW_COUNT; i++) {
-            for (int j = 0; j < COLUMN_COUNT; j++) {
+        for (int row = 0; row < ROW_COUNT; row++) {
+            for (int column = 0; column < COLUMN_COUNT; column++) {
                 for (int k = 0; k < 4; k++) {
-                    if (board[i][j] == ChessType.WHITE) {
-                        switch (analysis[i][j][k]) {
+                    if (board[row][column] == ChessType.WHITE) {
+                        switch (analysis[row][column][k]) {
                             case FIVE:
                                 analysisRecord[0][SituationType.FIVE.ordinal()]++;
                             case FOUR:
@@ -58,8 +60,8 @@ public class Evaluator implements BaseEvaluator {
                             case STWO:
                                 analysisRecord[0][SituationType.STWO.ordinal()]++;
                         }
-                    } else if (board[i][j] == ChessType.BLACK) {
-                        switch (analysis[i][j][k]) {
+                    } else if (board[row][column] == ChessType.BLACK) {
+                        switch (analysis[row][column][k]) {
                             case FIVE:
                                 analysisRecord[1][SituationType.FIVE.ordinal()]++;
                             case FOUR:
@@ -171,13 +173,13 @@ public class Evaluator implements BaseEvaluator {
             WValue += analysisRecord[0][SituationType.STWO.ordinal()];
             BValue += analysisRecord[1][SituationType.STWO.ordinal()];
         }
-        for (int i = 0; i < ROW_COUNT; i++) {
-            for (int j = 0; j < COLUMN_COUNT; j++) {
-                if (board[i][j] == ChessType.NONE) {
-                    if (board[i][j] == ChessType.BLACK) {
-                        BValue += posValue[i][j];
+        for (int row = 0; row < ROW_COUNT; row++) {
+            for (int column = 0; column < COLUMN_COUNT; column++) {
+                if (board[row][column] == ChessType.NONE) {
+                    if (board[row][column] == ChessType.BLACK) {
+                        BValue += posValue[row][column];
                     } else {
-                        WValue += posValue[i][j];
+                        WValue += posValue[row][column];
                     }
                 }
             }
@@ -198,10 +200,10 @@ public class Evaluator implements BaseEvaluator {
     }
 
     private void clearAnalysis() {
-        for (int i = 0; i < ROW_COUNT; i++) {
-            for (int j = 0; j < COLUMN_COUNT; j++) {
+        for (int row = 0; row < ROW_COUNT; row++) {
+            for (int column = 0; column < COLUMN_COUNT; column++) {
                 for (int k = 0; k < 4; k++) {
-                    analysis[i][j][k] = SituationType.UNANALYZED;
+                    analysis[row][column][k] = SituationType.UNANALYZED;
                 }
             }
         }
@@ -210,8 +212,8 @@ public class Evaluator implements BaseEvaluator {
 
     @Override
     public void analysisHorizon(ChessType[][] board, ChessPos pos) {
-        ChessType[] analysisLine = new ChessType[ROW_COUNT];
-        for (int i = 0; i < ROW_COUNT; i++) {
+        ChessType[] analysisLine = new ChessType[COLUMN_COUNT];
+        for (int i = 0; i < COLUMN_COUNT; i++) {
             analysisLine[i] = board[pos.getRow()][i];
         }
         SituationType[] linRecord = analysisLine(analysisLine, pos.getColumn());
@@ -271,8 +273,14 @@ public class Evaluator implements BaseEvaluator {
     }
 
     public SituationType[] analysisLine(ChessType[] line, int pos) {
-        ChessType type = line[pos];
         SituationType[] lineRecord = new SituationType[line.length];
+        if (line.length < 4) {
+            for (int i = 0; i < line.length; i++) {
+                lineRecord[i] = SituationType.ANALYZED;
+            }
+            return lineRecord;
+        }
+        ChessType type = line[pos];
 
         int leftEdge = pos;
         int rightEdge = pos;
@@ -282,7 +290,7 @@ public class Evaluator implements BaseEvaluator {
             }
             leftEdge--;
         }
-        while (rightEdge < ROW_COUNT) {
+        while (rightEdge < line.length) {
             if (line[rightEdge + 1] != type) {
                 break;
             }
@@ -296,7 +304,7 @@ public class Evaluator implements BaseEvaluator {
             }
             leftRange--;
         }
-        while (rightEdge < ROW_COUNT) {
+        while (rightEdge < line.length) {
             if (line[rightEdge + 1] != ChessType.NONE && line[leftRange] != type) {
                 break;
             }
@@ -317,7 +325,7 @@ public class Evaluator implements BaseEvaluator {
                 if (line[leftEdge - 1] == ChessType.NONE) {
                     leftLimit = false;
                 }
-                if (rightEdge < ROW_COUNT) {
+                if (rightEdge < line.length) {
                     if (line[rightEdge + 1] == ChessType.NONE) {
                         if (!leftLimit) {
                             for (int i = leftEdge; i <= rightEdge; i++) {
@@ -356,9 +364,9 @@ public class Evaluator implements BaseEvaluator {
                     }
                 }
             }
-            if (rightEdge < ROW_COUNT) {
+            if (rightEdge < line.length) {
                 if (line[rightEdge + 1] == ChessType.NONE) {
-                    if (rightEdge < ROW_COUNT - 1 && line[rightEdge + 2] == type) {
+                    if (rightEdge < line.length - 1 && line[rightEdge + 2] == type) {
                         lineRecord[rightEdge + 2] = SituationType.ANALYZED;
                         for (int i = leftEdge; i <= rightEdge; i++) {
                             lineRecord[i] = SituationType.ANALYZED;
@@ -418,9 +426,9 @@ public class Evaluator implements BaseEvaluator {
                     }
                 }
             }
-            if (rightEdge < ROW_COUNT) {
+            if (rightEdge < line.length) {
                 if (line[rightEdge + 1] == ChessType.NONE) {
-                    if (rightEdge < ROW_COUNT - 2 && line[rightEdge + 2] == type && line[rightEdge + 3] == type) {
+                    if (rightEdge < line.length - 2 && line[rightEdge + 2] == type && line[rightEdge + 3] == type) {
                         if (leftSituation == SituationType.SFOUR) {
                             for (int i = leftEdge; i <= rightEdge; i++) {
                                 lineRecord[i] = SituationType.ANALYZED;
@@ -438,7 +446,7 @@ public class Evaluator implements BaseEvaluator {
                             lineRecord[rightEdge + 3] = SituationType.ANALYZED;
                             lineRecord[pos] = SituationType.SFOUR;
                         }
-                    } else if (rightEdge < ROW_COUNT - 1 && line[rightEdge + 2] == type) {
+                    } else if (rightEdge < line.length - 1 && line[rightEdge + 2] == type) {
                         if (leftSituation == SituationType.SFOUR) {
                             for (int i = leftEdge; i <= rightEdge; i++) {
                                 lineRecord[i] = SituationType.ANALYZED;
