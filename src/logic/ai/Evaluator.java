@@ -304,11 +304,11 @@ public class Evaluator implements BaseEvaluator {
             }
             leftRange--;
         }
-        while (rightEdge < line.length) {
-            if (line[rightEdge + 1] != ChessType.NONE && line[leftRange] != type) {
+        while (rightRange < line.length) {
+            if (line[rightRange + 1] != ChessType.NONE && line[rightRange+1] != type) {
                 break;
             }
-            leftRange--;
+            rightRange++;
         }
         if (rightRange - leftRange < 4) {
             for (int i = leftEdge; i <= rightEdge; i++) {
