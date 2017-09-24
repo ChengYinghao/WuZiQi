@@ -47,7 +47,7 @@ class MainSession {
 						if (playingAI==null) {
 							chessboardUI.message = "${newGameState.holdingChess}"
 						} else {
-							chessboardUI.message = "AI is thinking..."
+							chessboardUI.message = "AI of $holdingChess is thinking..."
 							thread {
 								val pos = playingAI.nextMovement(chessboard)
 								Platform.runLater { makeMovement(pos.row, pos.column) }
