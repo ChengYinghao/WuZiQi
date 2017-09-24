@@ -1,6 +1,7 @@
 package model
 
 import javafx.application.Platform
+import logic.ai.CYHChessAI
 import logic.ai.ChessAI
 import logic.ai.ChessPos
 import logic.chessboard.*
@@ -18,9 +19,9 @@ class MainSession {
 	private var isPlaying = true
 	private val chessboardSize = 15
 	private val chessboard: Chessboard = CYHChessboard(chessboardSize, chessboardSize)
-	
+
 	//ai
-	private val playerAIMap:Map<ChessType,ChessAI?> = mapOf(ChessType.BLACK to null, ChessType.WHITE to null)
+	private val playerAIMap:Map<ChessType,ChessAI?> = mapOf(ChessType.BLACK to null, ChessType.WHITE to CYHChessAI())
 	private val playingAI get() = playerAIMap[holdingChess]
 	
 	//ui

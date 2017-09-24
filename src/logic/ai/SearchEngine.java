@@ -8,8 +8,8 @@ import java.util.ArrayList;
 public class SearchEngine implements BaseSearchEngine {
     int maxSearchDepth = 10;
     CYHChessboard cyhChessboard = new CYHChessboard(15, 15);
-    BaseEvaluator evaluator;
-    BaseMoveGenerator baseMoveGenerator;
+    BaseEvaluator evaluator = new Evaluator();
+    BaseMoveGenerator baseMoveGenerator = new MoveGenerator();
     ChessMove bestMove;
 
     @Override
@@ -23,17 +23,6 @@ public class SearchEngine implements BaseSearchEngine {
     public void setSearch(int depth) {
         maxSearchDepth = depth;
     }
-
-    @Override
-    public void setEvaluator(BaseEvaluator evaluator) {
-        this.evaluator = evaluator;
-    }
-
-    @Override
-    public void setMoveGenerator(BaseMoveGenerator moveGenerator) {
-        this.baseMoveGenerator = moveGenerator;
-    }
-
 
     @Override
     public int isGameOver(ChessType[][] board, int depth) {
@@ -66,11 +55,11 @@ public class SearchEngine implements BaseSearchEngine {
         boolean isWhiteTurn;
         side = (maxSearchDepth - depth) % 2;
         if (side == 0) {
-            isWhiteTurn = false;
-            type = ChessType.BLACK;
-        } else {
             isWhiteTurn = true;
             type = ChessType.WHITE;
+        } else {
+            isWhiteTurn = false;
+            type = ChessType.BLACK;
         }
         int isGameOver = isGameOver(cyhChessboard.board, depth);
         if (isGameOver != 0) {
@@ -79,7 +68,6 @@ public class SearchEngine implements BaseSearchEngine {
         }
         if (depth <= 0) {
             int score = evaluator.evaluate(cyhChessboard.board, isWhiteTurn);
-            bestMove = null;
             return score;
         }
         ArrayList<ChessMove> moveList = baseMoveGenerator.createPossibleMove(cyhChessboard.board, depth, isWhiteTurn);

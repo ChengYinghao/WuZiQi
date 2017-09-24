@@ -13,10 +13,6 @@ interface BaseSearchEngine {
 
     void setSearch(int depth);
 
-    void setEvaluator(BaseEvaluator evaluator);
-
-    void setMoveGenerator(BaseMoveGenerator moveGenerator);
-
     int isGameOver(ChessType[][] board, int depth);
 
     void makeMove(ChessMove chessMove, ChessType type);
