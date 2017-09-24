@@ -1,7 +1,8 @@
 package model
 
 import javafx.application.Platform
-import logic.ai.CYHChessAI
+import logic.ai.ChessAI
+import logic.ai.ChessPos
 import logic.chessboard.*
 import ui.ChessboardUI
 import ui.ZKLChessboardUI
@@ -13,24 +14,27 @@ fun main(args: Array<String>) {
 
 class MainSession {
 	
+	//logic
+	private var isPlaying = true
 	private val chessboardSize = 15
-	val chessboard: Chessboard = CYHChessboard(chessboardSize,chessboardSize)
-	val chessboardUI: ChessboardUI = ZKLChessboardUI(chessboard).apply {
-		onMovementListener = {row, column -> if(playingAI==null) makeMovement(row, column) }
-	}
-	val playerAIMap = mapOf(ChessType.BLACK to null, ChessType.WHITE to CYHChessAI())
+	private val chessboard: Chessboard = CYHChessboard(chessboardSize, chessboardSize)
 	
-	private val holdingChess get() = chessboard.holdingChess
+	//ai
+	private val playerAIMap:Map<ChessType,ChessAI?> = mapOf(ChessType.BLACK to null, ChessType.WHITE to null)
 	private val playingAI get() = playerAIMap[holdingChess]
 	
-	fun launch(){
-		chessboardUI.message = "BLACK first"
-		chessboardUI.update()
-		chessboardUI.show()
+	//ui
+	private val chessboardUI: ChessboardUI = ZKLChessboardUI(chessboard).also { ui ->
+		ui.onMovementListener = { row, column ->
+			if (playingAI == null && isPlaying) makeMovement(ChessPos(row, column))
+		}
 	}
+	private val holdingChess get() = chessboard.holdingChess
 	
-	private fun makeMovement(row: Int, column: Int) {
-		val movementResult = chessboard.makeMovement(row, column)
+	
+	//session
+	private fun makeMovement(chessPos: ChessPos) {
+		val movementResult = chessboard.makeMovement(chessPos.row, chessPos.column)
 		when (movementResult) {
 			is MovementResult.Illegal -> {
 				chessboardUI.message =
@@ -40,23 +44,39 @@ class MainSession {
 			is MovementResult.Legal -> {
 				val newGameState = movementResult.newGameState
 				when (newGameState) {
-					is GameState.Win -> chessboardUI.message = "${newGameState.winner.name} win !!!"
+					is GameState.Win -> chessboardUI.message = "${newGameState.winner} win !!!"
 					is GameState.Draw -> chessboardUI.message = "Game Over! Nobody win..."
-					is GameState.Playing -> {
-						val playingAI=playingAI
-						if (playingAI==null) {
-							chessboardUI.message = "${newGameState.holdingChess}"
-						} else {
-							chessboardUI.message = "AI of $holdingChess is thinking..."
-							thread {
-								val pos = playingAI.nextMovement(chessboard)
-								Platform.runLater { makeMovement(pos.row, pos.column) }
-							}
-						}
+					is GameState.Playing -> playingAI.let {
+						if (it != null) aiMovement(it)
+						else manMovement()
 					}
 				}
+				isPlaying = newGameState is GameState.Playing
 				chessboardUI.update()
 			}
+		}
+	}
+	private fun aiMovement(ai: ChessAI) {
+		Platform.runLater {
+			chessboardUI.message = "AI of $holdingChess is thinking..."
+			thread {
+				val pos = ai.nextMovement(chessboard)
+				Platform.runLater {
+					makeMovement(pos)
+				}
+			}
+		}
+	}
+	private fun manMovement(isFirst: Boolean = false) {
+		chessboardUI.message = if (isFirst) "$holdingChess first" else "$holdingChess next"
+	}
+	
+	fun launch() {
+		chessboardUI.update()
+		chessboardUI.show()
+		playingAI.let {
+			if (it != null) aiMovement(it)
+			else manMovement(true)
 		}
 	}
 	
