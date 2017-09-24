@@ -113,21 +113,15 @@ public class CYHChessboard implements Chessboard {
         int count = 1;
         //检查横向左边
         for (int i = 1; i < 5; i++) {
-            if (column - i >= 0) {
-                if (board[row][column - i] != board[row][column]) {
-                    break;
-                }
-            }
-            count++;
+            if (column - i >= 0 && board[row][column - i] == board[row][column]) {
+                count++;
+            } else break;
         }
         //检查横向右边
         for (int i = 1; i < 5; i++) {
-            if (column + i < COLUMN_COUNT) {
-                if (board[row][column + i] != board[row][column]) {
-                    break;
-                }
-            }
-            count++;
+            if (column + i < COLUMN_COUNT && board[row][column - i] == board[row][column]) {
+                count++;
+            } else break;
         }
         if (count >= 5) {
             return true;
@@ -135,21 +129,15 @@ public class CYHChessboard implements Chessboard {
         count = 1;
         //检查纵向上边
         for (int i = 1; i < 5; i++) {
-            if (row - i >= 0) {
-                if (board[row - i][column] != board[row][column]) {
-                    break;
-                }
-            }
-            count++;
+            if ((row - i) >= 0 && board[row - i][column] == board[row][column]) {
+                count++;
+            } else break;
         }
         //检查纵向下边
         for (int i = 1; i < 5; i++) {
-            if (row + i < ROW_COUNT) {
-                if (board[row + i][column] != board[row][column]) {
-                    break;
-                }
-            }
-            count++;
+            if (row + i < ROW_COUNT && board[row + i][column] == board[row][column]) {
+                count++;
+            } else break;
         }
         if (count >= 5) {
             return true;
@@ -157,21 +145,15 @@ public class CYHChessboard implements Chessboard {
         count = 1;
         //检查左上角
         for (int i = 1; i < 5; i++) {
-            if (row - i >= 0 && column - i >= 0) {
-                if (board[row - i][column - i] != board[row][column]) {
-                    break;
-                }
-            }
-            count++;
+            if (column - i >= 0 && row - i >= 0 && board[row - i][column - i] == board[row][column]) {
+                count++;
+            } else break;
         }
         //检查右下角
         for (int i = 1; i < 5; i++) {
-            if (row + i < ROW_COUNT && column + i < COLUMN_COUNT) {
-                if (board[row + i][column + i] != board[row][column]) {
-                    break;
-                }
-            }
-            count++;
+            if (row + i < ROW_COUNT && column + i < COLUMN_COUNT && board[row + i][column + i] == board[row][column]) {
+                count++;
+            } else break;
         }
         if (count >= 5) {
             return true;
@@ -179,21 +161,15 @@ public class CYHChessboard implements Chessboard {
         count = 1;
         //检查左下角
         for (int i = 1; i < 5; i++) {
-            if (row + i < ROW_COUNT && column - i >= 0) {
-                if (board[row + i][column - i] != board[row][column]) {
-                    break;
-                }
-            }
-            count++;
+            if (column - i >= 0 && row + i < ROW_COUNT && board[row + i][column - i] == board[row][column]) {
+                count++;
+            } else break;
         }
         //检查右上角
         for (int i = 1; i < 5; i++) {
-            if (row - i >= 0 && column + i < COLUMN_COUNT) {
-                if (board[row - i][column + i] != board[row][column]) {
-                    break;
-                }
-            }
-            count++;
+            if (row - i >= 0 && column + i < COLUMN_COUNT && board[row - i][column + i] == board[row][column]) {
+                count++;
+            } else break;
         }
         return count >= 5;
     }

@@ -44,6 +44,7 @@ public class Evaluator implements BaseEvaluator {
             for (int column = 0; column < COLUMN_COUNT; column++) {
                 for (int k = 0; k < 4; k++) {
                     if (board[row][column] == ChessType.WHITE) {
+                        System.out.println(analysis[row][column][k]);
                         switch (analysis[row][column][k]) {
                             case FIVE:
                                 analysisRecord[0][SituationType.FIVE.ordinal()]++;
@@ -304,8 +305,8 @@ public class Evaluator implements BaseEvaluator {
             }
             leftRange--;
         }
-        while (rightRange < line.length) {
-            if (line[rightRange + 1] != ChessType.NONE && line[rightRange+1] != type) {
+        while (rightRange < line.length - 1) {
+            if (line[rightRange + 1] != ChessType.NONE && line[rightRange + 1] != type) {
                 break;
             }
             rightRange++;
