@@ -60,12 +60,19 @@ class MainSession {
 	private fun aiMovement(ai: ChessAI) {
 		Platform.runLater {
 			chessboardUI.message = "AI of $holdingChess is thinking..."
-			thread {
+			val aiThread = thread(false) {
 				val pos = ai.nextMovement(chessboard)
 				Platform.runLater {
 					makeMovement(pos)
 				}
 			}
+			aiThread.setUncaughtExceptionHandler { _, e ->
+				Platform.runLater {
+					Platform.exit()
+					throw e
+				}
+			}
+			aiThread.start()
 		}
 	}
 	private fun manMovement(isFirst: Boolean = false) {
