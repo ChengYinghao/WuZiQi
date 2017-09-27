@@ -1,12 +1,12 @@
 package logic.ai;
 
+import java.util.ArrayList;
+
 import logic.chessboard.CYHChessboard;
 import logic.chessboard.ChessType;
 
-import java.util.ArrayList;
-
 public class SearchEngine implements BaseSearchEngine {
-    int maxSearchDepth = 10;
+    int maxSearchDepth = 2;
     CYHChessboard cyhChessboard = new CYHChessboard(15, 15);
     BaseEvaluator evaluator = new Evaluator();
     BaseMoveGenerator baseMoveGenerator = new MoveGenerator();
