@@ -62,8 +62,14 @@ class MainSession {
 			chessboardUI.message = "AI of $holdingChess is thinking..."
 			val aiThread = thread(false) {
 				val pos = ai.nextMovement(chessboard)
-				Platform.runLater {
-					makeMovement(pos)
+				if (pos != null) {
+					Platform.runLater {
+						makeMovement(pos)
+					}
+				} else {
+					Platform.runLater {
+						chessboardUI.message = "AI can't action any more!"
+					}
 				}
 			}
 			aiThread.setUncaughtExceptionHandler { _, e ->

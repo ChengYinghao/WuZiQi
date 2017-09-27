@@ -15,6 +15,7 @@ public class CYHChessAI implements ChessAI {
             }
         }
         ChessMove nextMove = search.searchABestMove(board, chessboard.getHoldingChess() == ChessType.WHITE);
+        if(nextMove==null) return null;
         return nextMove.getPos();
     }
 }
