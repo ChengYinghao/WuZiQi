@@ -1,7 +1,6 @@
 package model
 
 import javafx.application.Platform
-import logic.ai.CYHChessAI
 import logic.ai.ChessAI
 import logic.ai.ChessPos
 import logic.chessboard.*
@@ -15,19 +14,17 @@ fun main(args: Array<String>) {
 
 class MainSession {
 	
-	//logic
-	private var isPlaying = true
 	private val chessboardSize = 15
 	private val chessboard: Chessboard = CYHChessboard(chessboardSize, chessboardSize)
 
 	//ai
-	private val playerAIMap:Map<ChessType,ChessAI?> = mapOf(ChessType.BLACK to null, ChessType.WHITE to CYHChessAI())
+	private val playerAIMap:Map<ChessType,ChessAI?> = mapOf(ChessType.BLACK to null, ChessType.WHITE to null)
 	private val playingAI get() = playerAIMap[holdingChess]
 	
 	//ui
 	private val chessboardUI: ChessboardUI = ZKLChessboardUI(chessboard).also { ui ->
 		ui.onMovementListener = { row, column ->
-			if (playingAI == null && isPlaying) makeMovement(ChessPos(row, column))
+			if (playingAI == null && !chessboard.isGameOver) makeMovement(ChessPos(row, column))
 		}
 	}
 	private val holdingChess get() = chessboard.holdingChess
@@ -52,7 +49,6 @@ class MainSession {
 						else manMovement()
 					}
 				}
-				isPlaying = newGameState is GameState.Playing
 				chessboardUI.update()
 			}
 		}
