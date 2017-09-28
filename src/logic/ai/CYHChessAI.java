@@ -4,7 +4,7 @@ import logic.chessboard.ChessType;
 import logic.chessboard.Chessboard;
 
 public class CYHChessAI implements ChessAI {
-    SearchEngine search = new SearchEngine();
+    private SearchEngine search = new SearchEngine();
 
     @Override
     public ChessPos nextMovement(Chessboard chessboard) {

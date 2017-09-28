@@ -1,8 +1,8 @@
 package model
 
 import javafx.application.Platform
+import logic.ai.CYHChessAI
 import logic.ai.ChessAI
-import logic.ai.ChessPos
 import logic.chessboard.*
 import ui.ChessboardUI
 import ui.ZKLChessboardUI
@@ -18,21 +18,23 @@ class MainSession {
 	private val chessboard: Chessboard = CYHChessboard(chessboardSize, chessboardSize)
 
 	//ai
-	private val playerAIMap:Map<ChessType,ChessAI?> = mapOf(ChessType.BLACK to null, ChessType.WHITE to null)
+	private val playerAIMap:Map<ChessType,ChessAI?> = mapOf(ChessType.BLACK to null, ChessType.WHITE to CYHChessAI())
 	private val playingAI get() = playerAIMap[holdingChess]
 	
 	//ui
 	private val chessboardUI: ChessboardUI = ZKLChessboardUI(chessboard).also { ui ->
 		ui.onMovementListener = { row, column ->
-			if (playingAI == null && !chessboard.isGameOver) makeMovement(ChessPos(row, column))
+			if (playingAI == null && !chessboard.isGameOver) {
+				makeMovement(row, column)
+			}
 		}
 	}
 	private val holdingChess get() = chessboard.holdingChess
 	
 	
 	//session
-	private fun makeMovement(chessPos: ChessPos) {
-		val movementResult = chessboard.makeMovement(chessPos.row, chessPos.column)
+	private fun makeMovement(row:Int,column:Int){
+		val movementResult = chessboard.makeMovement(row, column)
 		when (movementResult) {
 			is MovementResult.Illegal -> {
 				chessboardUI.message =
@@ -53,6 +55,7 @@ class MainSession {
 			}
 		}
 	}
+	
 	private fun aiMovement(ai: ChessAI) {
 		Platform.runLater {
 			chessboardUI.message = "AI of $holdingChess is thinking..."
@@ -60,7 +63,7 @@ class MainSession {
 				val pos = ai.nextMovement(chessboard)
 				if (pos != null) {
 					Platform.runLater {
-						makeMovement(pos)
+						makeMovement(pos.row, pos.column)
 					}
 				} else {
 					Platform.runLater {
