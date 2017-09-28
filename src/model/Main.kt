@@ -19,6 +19,7 @@ class MainSession {
 
 	//ai
 	private val playerAIMap:Map<ChessType,ChessAI?> = mapOf(ChessType.BLACK to null, ChessType.WHITE to CYHChessAI())
+	private val playerNameMap:Map<ChessType,String> = mapOf(ChessType.BLACK to "黑棋", ChessType.WHITE to "白棋")
 	private val playingAI get() = playerAIMap[holdingChess]
 	
 	//ui
@@ -38,14 +39,14 @@ class MainSession {
 		when (movementResult) {
 			is MovementResult.Illegal -> {
 				chessboardUI.message =
-					if (playingAI == null) "You can't do this."
-					else "AI of $holdingChess action illegally!"
+					if (playingAI == null) "你不能这么下！"
+					else "${playerNameMap[holdingChess]}AI下的棋不符合规则！"
 			}
 			is MovementResult.Legal -> {
 				val newGameState = movementResult.newGameState
 				when (newGameState) {
-					is GameState.Win -> chessboardUI.message = "${newGameState.winner} win !!!"
-					is GameState.Draw -> chessboardUI.message = "Game Over! Nobody win..."
+					is GameState.Win -> chessboardUI.message = "${playerNameMap[newGameState.winner]}赢了！！"
+					is GameState.Draw -> chessboardUI.message = "呃，平局……"
 					is GameState.Playing -> playingAI.let {
 						if (it != null) aiMovement(it)
 						else manMovement()
@@ -58,7 +59,7 @@ class MainSession {
 	
 	private fun aiMovement(ai: ChessAI) {
 		Platform.runLater {
-			chessboardUI.message = "AI of $holdingChess is thinking..."
+			chessboardUI.message = "${playerNameMap[holdingChess]}AI正在思考……"
 			val aiThread = thread(false) {
 				val pos = ai.nextMovement(chessboard)
 				if (pos != null) {
@@ -67,7 +68,7 @@ class MainSession {
 					}
 				} else {
 					Platform.runLater {
-						chessboardUI.message = "AI can't action any more!"
+						chessboardUI.message = "${playerNameMap[holdingChess]}AI弃子而逃！！"
 					}
 				}
 			}
@@ -81,7 +82,7 @@ class MainSession {
 		}
 	}
 	private fun manMovement(isFirst: Boolean = false) {
-		chessboardUI.message = if (isFirst) "$holdingChess first" else "$holdingChess next"
+		chessboardUI.message = if (isFirst) "${playerNameMap[holdingChess]}先下" else "到${playerNameMap[holdingChess]}了"
 	}
 	
 	fun launch() {
