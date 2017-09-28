@@ -3,7 +3,6 @@ package model
 import javafx.application.Platform
 import logic.ai.CYHChessAI
 import logic.ai.ChessAI
-import logic.ai.ChessPos
 import logic.chessboard.*
 import ui.ChessboardUI
 import ui.ZKLChessboardUI
@@ -15,8 +14,6 @@ fun main(args: Array<String>) {
 
 class MainSession {
 	
-	//logic
-	private var isPlaying = true
 	private val chessboardSize = 15
 	private val chessboard: Chessboard = CYHChessboard(chessboardSize, chessboardSize)
 
@@ -27,15 +24,17 @@ class MainSession {
 	//ui
 	private val chessboardUI: ChessboardUI = ZKLChessboardUI(chessboard).also { ui ->
 		ui.onMovementListener = { row, column ->
-			if (playingAI == null && isPlaying) makeMovement(ChessPos(row, column))
+			if (playingAI == null && !chessboard.isGameOver) {
+				makeMovement(row, column)
+			}
 		}
 	}
 	private val holdingChess get() = chessboard.holdingChess
 	
 	
 	//session
-	private fun makeMovement(chessPos: ChessPos) {
-		val movementResult = chessboard.makeMovement(chessPos.row, chessPos.column)
+	private fun makeMovement(row:Int,column:Int){
+		val movementResult = chessboard.makeMovement(row, column)
 		when (movementResult) {
 			is MovementResult.Illegal -> {
 				chessboardUI.message =
@@ -52,20 +51,33 @@ class MainSession {
 						else manMovement()
 					}
 				}
-				isPlaying = newGameState is GameState.Playing
 				chessboardUI.update()
 			}
 		}
 	}
+	
 	private fun aiMovement(ai: ChessAI) {
 		Platform.runLater {
 			chessboardUI.message = "AI of $holdingChess is thinking..."
-			thread {
+			val aiThread = thread(false) {
 				val pos = ai.nextMovement(chessboard)
-				Platform.runLater {
-					makeMovement(pos)
+				if (pos != null) {
+					Platform.runLater {
+						makeMovement(pos.row, pos.column)
+					}
+				} else {
+					Platform.runLater {
+						chessboardUI.message = "AI can't action any more!"
+					}
 				}
 			}
+			aiThread.setUncaughtExceptionHandler { _, e ->
+				Platform.runLater {
+					Platform.exit()
+					throw e
+				}
+			}
+			aiThread.start()
 		}
 	}
 	private fun manMovement(isFirst: Boolean = false) {

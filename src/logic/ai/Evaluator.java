@@ -258,31 +258,32 @@ public class Evaluator implements BaseEvaluator {
 
     @Override
     public void analysisRightOblique(ChessType[][] board, ChessPos pos) {
-        int length = Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn()) + 1 + Math.min(pos.getRow(), COLUMN_COUNT - 1 - pos.getColumn());
+        int posIndex = Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn());
+        int length = posIndex + 1 + Math.min(pos.getRow(), COLUMN_COUNT - 1 - pos.getColumn());
         ChessType[] analysisLine = new ChessType[length];
-        for (int k = Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn()); k >= 0; k--) {
-            analysisLine[Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn()) - k] = board[pos.getRow() + k][pos.getColumn() - k];
+        for (int k = posIndex; k >= 0; k--) {
+            analysisLine[posIndex - k] = board[pos.getRow() + k][pos.getColumn() - k];
         }
         for (int k = 1; k <= Math.min(pos.getRow(), COLUMN_COUNT - 1 - pos.getColumn()); k++) {
-            analysisLine[Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn()) + k] = board[pos.getRow() - k][pos.getColumn() + k];
+            analysisLine[posIndex + k] = board[pos.getRow() - k][pos.getColumn() + k];
         }
-        SituationType[] lineRecord = analysisLine(analysisLine, Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn()));
-        for (int i = 0; i <= Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn()); i++) {
-            analysis[pos.getRow() - i + Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn())][pos.getColumn() + i - Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn())][3] = lineRecord[i];
-        }
-        for (int i = Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn()) + 1; i < length; i++) {
-            analysis[pos.getRow() + i - Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn())][pos.getColumn() + i - Math.min(COLUMN_COUNT - 1 - pos.getRow(), pos.getColumn())][3] = lineRecord[i];
+        SituationType[] lineRecord = analysisLine(analysisLine, posIndex);
+        for (int i = 0; i < length; i++) {
+            analysis[pos.getRow() + posIndex - i][pos.getColumn() + i - posIndex][3] = lineRecord[i];
         }
     }
 
     public SituationType[] analysisLine(ChessType[] line, int pos) {
-        // 用来记录所要分析局势行的各个位置对应局势值
         SituationType[] lineRecord = new SituationType[line.length];
         if (line.length < 4) {
             for (int i = 0; i < line.length; i++) {
                 lineRecord[i] = SituationType.ANALYZED;
             }
             return lineRecord;
+        }else{
+            for (int i = 0; i < line.length; i++) {
+                lineRecord[i] = SituationType.UNANALYZED;
+            }
         }
         ChessType type = line[pos];
         //左边界和右边界用来记录已经有多少个同类型棋在一条线上
@@ -431,7 +432,7 @@ public class Evaluator implements BaseEvaluator {
                     }
                 }
             }
-            if (rightEdge < line.length - 1) {
+            if (rightEdge < line.length- 1) {
                 if (line[rightEdge + 1] == ChessType.NONE) {
                     if (rightEdge < line.length - 3 && line[rightEdge + 2] == type && line[rightEdge + 3] == type) {
                         if (leftSituation == SituationType.SFOUR) {

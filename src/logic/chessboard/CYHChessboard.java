@@ -3,105 +3,81 @@ package logic.chessboard;
 import org.jetbrains.annotations.NotNull;
 
 public class CYHChessboard implements Chessboard {
-    private final int ROW_COUNT;
-    private final int COLUMN_COUNT;
-    public ChessType[][] board;
-    private boolean isWhiteTurn = false;
-
+    
     public CYHChessboard(int rowCount, int columnCount) {
-        ROW_COUNT = rowCount;
-        COLUMN_COUNT = columnCount;
-        board = new ChessType[ROW_COUNT][COLUMN_COUNT];
-        initChessboard();
+        this.rowCount = rowCount;
+        this.columnCount = columnCount;
+        board = new ChessType[rowCount][columnCount];
+        clear();
     }
-
-    private void initChessboard() {
-        for (int row = 0; row < ROW_COUNT; row++) {
-            for (int column = 0; column < COLUMN_COUNT; column++) {
-                board[row][column] = ChessType.NONE;
-            }
-        }
-    }
-
+    
     //棋盘
+    private final int rowCount;
+    private final int columnCount;
+    @Override public int getRowCount() { return rowCount; }
+    @Override public int getColumnCount() { return columnCount; }
+    
+    public ChessType[][] board;
+    @NotNull @Override public ChessType get(int row, int column) { return board[row][column]; }
+    @Override public void set(int row, int column, @NotNull ChessType chess) { board[row][column] = chess; }
 
-
-    @Override
-    public int getRowCount() {
-        return ROW_COUNT;
-    }
-
-    @Override
-    public int getColumnCount() {
-        return COLUMN_COUNT;
-    }
-
-    @NotNull
-    @Override
-    public ChessType get(int row, int column) {
-        return board[row][column];
-    }
-
-    @Override
-    public void set(int row, int column, @NotNull ChessType chess) {
-        board[row][column] = chess;
-    }
-
-    @NotNull
-    @Override
-    public ChessType getHoldingChess() {
+    
+    //游戏逻辑
+    private Boolean isGameOver = false;
+    @Override public boolean isGameOver() { return isGameOver; }
+    
+    private boolean isWhiteTurn = false;
+    @NotNull @Override public ChessType getHoldingChess() {
         if (isWhiteTurn) {
             return ChessType.WHITE;
         } else {
             return ChessType.BLACK;
         }
     }
-
-    @Override
-    public void setHoldingChess(@NotNull ChessType chessType) {
-        isWhiteTurn = chessType != ChessType.BLACK;
-    }
-
-
-    @Override
-    public void clear() {
-        for (int i = 0; i < ROW_COUNT; i++) {
-            for (int j = 0; j < COLUMN_COUNT; j++) {
-                board[i][j] = ChessType.NONE;
-            }
-        }
-    }
-
-    @NotNull
-    @Override
-    public MovementResult makeMovement(int row, int column) {
+    
+    @NotNull @Override public MovementResult makeMovement(int row, int column) {
         //如果原来有棋子了，就不能再往上面下
         if (this.get(row, column) != ChessType.NONE) return new MovementResult.Illegal();
-
+        
         //往上面放棋子
         ChessType oldHoldingChess = getHoldingChess();
         this.set(row, column, oldHoldingChess);
-
+        
         //交换棋手
         ChessType newHoldingChess = oldHoldingChess.opposite();
-        setHoldingChess(newHoldingChess);
-
+        isWhiteTurn = newHoldingChess != ChessType.BLACK;
+        
         //判断局势
         boolean win = checkMovementWin(row, column);
         boolean draw = !win && checkDraw();
         GameState newGameState;
         if (win) {
             newGameState = new GameState.Win(oldHoldingChess);
+            isGameOver = true;
         } else if (draw) {
             newGameState = new GameState.Draw();
+            isGameOver = true;
         } else {
             newGameState = new GameState.Playing(newHoldingChess);
+            isGameOver = false;
         }
-
+        
         return new MovementResult.Legal(newGameState);
-
+        
     }
-
+    
+    @Override public void clear() {
+        for (int row = 0; row < rowCount; row++) {
+            for (int column = 0; column < columnCount; column++) {
+                board[row][column] = ChessType.NONE;
+            }
+        }
+        isGameOver = false;
+    }
+    
+    
+    //privates
+    
     /**
      * 检查是否因为某个落子而获胜
      *
@@ -113,15 +89,21 @@ public class CYHChessboard implements Chessboard {
         int count = 1;
         //检查横向左边
         for (int i = 1; i < 5; i++) {
-            if (column - i >= 0 && board[row][column - i] == board[row][column]) {
-                count++;
-            } else break;
+            if (column - i >= 0) {
+                if (board[row][column - i] != board[row][column]) {
+                    break;
+                }
+            }
+            count++;
         }
         //检查横向右边
         for (int i = 1; i < 5; i++) {
-            if (column + i < COLUMN_COUNT && board[row][column - i] == board[row][column]) {
-                count++;
-            } else break;
+            if (column + i < columnCount) {
+                if (board[row][column + i] != board[row][column]) {
+                    break;
+                }
+            }
+            count++;
         }
         if (count >= 5) {
             return true;
@@ -129,15 +111,21 @@ public class CYHChessboard implements Chessboard {
         count = 1;
         //检查纵向上边
         for (int i = 1; i < 5; i++) {
-            if ((row - i) >= 0 && board[row - i][column] == board[row][column]) {
-                count++;
-            } else break;
+            if (row - i >= 0) {
+                if (board[row - i][column] != board[row][column]) {
+                    break;
+                }
+            }
+            count++;
         }
         //检查纵向下边
         for (int i = 1; i < 5; i++) {
-            if (row + i < ROW_COUNT && board[row + i][column] == board[row][column]) {
-                count++;
-            } else break;
+            if (row + i < rowCount) {
+                if (board[row + i][column] != board[row][column]) {
+                    break;
+                }
+            }
+            count++;
         }
         if (count >= 5) {
             return true;
@@ -145,15 +133,21 @@ public class CYHChessboard implements Chessboard {
         count = 1;
         //检查左上角
         for (int i = 1; i < 5; i++) {
-            if (column - i >= 0 && row - i >= 0 && board[row - i][column - i] == board[row][column]) {
-                count++;
-            } else break;
+            if (row - i >= 0 && column - i >= 0) {
+                if (board[row - i][column - i] != board[row][column]) {
+                    break;
+                }
+            }
+            count++;
         }
         //检查右下角
         for (int i = 1; i < 5; i++) {
-            if (row + i < ROW_COUNT && column + i < COLUMN_COUNT && board[row + i][column + i] == board[row][column]) {
-                count++;
-            } else break;
+            if (row + i < rowCount && column + i < columnCount) {
+                if (board[row + i][column + i] != board[row][column]) {
+                    break;
+                }
+            }
+            count++;
         }
         if (count >= 5) {
             return true;
@@ -161,15 +155,21 @@ public class CYHChessboard implements Chessboard {
         count = 1;
         //检查左下角
         for (int i = 1; i < 5; i++) {
-            if (column - i >= 0 && row + i < ROW_COUNT && board[row + i][column - i] == board[row][column]) {
-                count++;
-            } else break;
+            if (row + i < rowCount && column - i >= 0) {
+                if (board[row + i][column - i] != board[row][column]) {
+                    break;
+                }
+            }
+            count++;
         }
         //检查右上角
         for (int i = 1; i < 5; i++) {
-            if (row - i >= 0 && column + i < COLUMN_COUNT && board[row - i][column + i] == board[row][column]) {
-                count++;
-            } else break;
+            if (row - i >= 0 && column + i < columnCount) {
+                if (board[row - i][column + i] != board[row][column]) {
+                    break;
+                }
+            }
+            count++;
         }
         return count >= 5;
     }
@@ -181,8 +181,8 @@ public class CYHChessboard implements Chessboard {
      */
     private boolean checkDraw() {
         boolean isTie = true;
-        for (int row = 0; row < ROW_COUNT; row++) {
-            for (int column = 0; column < COLUMN_COUNT; column++) {
+        for (int row = 0; row < rowCount; row++) {
+            for (int column = 0; column < columnCount; column++) {
                 if (board[row][column] == ChessType.NONE) {
                     isTie = false;
                 }
