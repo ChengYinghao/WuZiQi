@@ -43,40 +43,42 @@ public class Evaluator implements BaseEvaluator {
         for (int row = 0; row < ROW_COUNT; row++) {
             for (int column = 0; column < COLUMN_COUNT; column++) {
                 for (int k = 0; k < 4; k++) {
-                    if (board[row][column] == ChessType.WHITE) {
-                        System.out.println(analysis[row][column][k]);
-                        switch (analysis[row][column][k]) {
-                            case FIVE:
-                                analysisRecord[0][SituationType.FIVE.ordinal()]++;
-                            case FOUR:
-                                analysisRecord[0][SituationType.FOUR.ordinal()]++;
-                            case SFOUR:
-                                analysisRecord[0][SituationType.SFOUR.ordinal()]++;
-                            case THREE:
-                                analysisRecord[0][SituationType.THREE.ordinal()]++;
-                            case STHREE:
-                                analysisRecord[0][SituationType.STHREE.ordinal()]++;
-                            case TWO:
-                                analysisRecord[0][SituationType.TWO.ordinal()]++;
-                            case STWO:
-                                analysisRecord[0][SituationType.STWO.ordinal()]++;
-                        }
-                    } else if (board[row][column] == ChessType.BLACK) {
-                        switch (analysis[row][column][k]) {
-                            case FIVE:
-                                analysisRecord[1][SituationType.FIVE.ordinal()]++;
-                            case FOUR:
-                                analysisRecord[1][SituationType.FOUR.ordinal()]++;
-                            case SFOUR:
-                                analysisRecord[1][SituationType.SFOUR.ordinal()]++;
-                            case THREE:
-                                analysisRecord[1][SituationType.THREE.ordinal()]++;
-                            case STHREE:
-                                analysisRecord[1][SituationType.STHREE.ordinal()]++;
-                            case TWO:
-                                analysisRecord[1][SituationType.TWO.ordinal()]++;
-                            case STWO:
-                                analysisRecord[1][SituationType.STWO.ordinal()]++;
+                    if (analysis[row][column][k] != null) {
+                        if (board[row][column] == ChessType.WHITE) {
+                            System.out.println(analysis[row][column][k]);
+                            switch (analysis[row][column][k]) {
+                                case FIVE:
+                                    analysisRecord[0][SituationType.FIVE.ordinal()]++;
+                                case FOUR:
+                                    analysisRecord[0][SituationType.FOUR.ordinal()]++;
+                                case SFOUR:
+                                    analysisRecord[0][SituationType.SFOUR.ordinal()]++;
+                                case THREE:
+                                    analysisRecord[0][SituationType.THREE.ordinal()]++;
+                                case STHREE:
+                                    analysisRecord[0][SituationType.STHREE.ordinal()]++;
+                                case TWO:
+                                    analysisRecord[0][SituationType.TWO.ordinal()]++;
+                                case STWO:
+                                    analysisRecord[0][SituationType.STWO.ordinal()]++;
+                            }
+                        } else if (board[row][column] == ChessType.BLACK) {
+                            switch (analysis[row][column][k]) {
+                                case FIVE:
+                                    analysisRecord[1][SituationType.FIVE.ordinal()]++;
+                                case FOUR:
+                                    analysisRecord[1][SituationType.FOUR.ordinal()]++;
+                                case SFOUR:
+                                    analysisRecord[1][SituationType.SFOUR.ordinal()]++;
+                                case THREE:
+                                    analysisRecord[1][SituationType.THREE.ordinal()]++;
+                                case STHREE:
+                                    analysisRecord[1][SituationType.STHREE.ordinal()]++;
+                                case TWO:
+                                    analysisRecord[1][SituationType.TWO.ordinal()]++;
+                                case STWO:
+                                    analysisRecord[1][SituationType.STWO.ordinal()]++;
+                            }
                         }
                     }
                 }
@@ -274,6 +276,7 @@ public class Evaluator implements BaseEvaluator {
     }
 
     public SituationType[] analysisLine(ChessType[] line, int pos) {
+        // 用来记录所要分析局势行的各个位置对应局势值
         SituationType[] lineRecord = new SituationType[line.length];
         if (line.length < 4) {
             for (int i = 0; i < line.length; i++) {
@@ -282,7 +285,7 @@ public class Evaluator implements BaseEvaluator {
             return lineRecord;
         }
         ChessType type = line[pos];
-
+        //左边界和右边界用来记录已经有多少个同类型棋在一条线上
         int leftEdge = pos;
         int rightEdge = pos;
         while (leftEdge > 0) {
@@ -291,7 +294,7 @@ public class Evaluator implements BaseEvaluator {
             }
             leftEdge--;
         }
-        while (rightEdge < line.length) {
+        while (rightEdge < line.length - 1) {
             if (line[rightEdge + 1] != type) {
                 break;
             }
@@ -311,6 +314,7 @@ public class Evaluator implements BaseEvaluator {
             }
             rightRange++;
         }
+        //该行不可能五子连珠
         if (rightRange - leftRange < 4) {
             for (int i = leftEdge; i <= rightEdge; i++) {
                 lineRecord[i] = SituationType.ANALYZED;
@@ -326,7 +330,7 @@ public class Evaluator implements BaseEvaluator {
                 if (line[leftEdge - 1] == ChessType.NONE) {
                     leftLimit = false;
                 }
-                if (rightEdge < line.length) {
+                if (rightEdge < line.length - 1) {
                     if (line[rightEdge + 1] == ChessType.NONE) {
                         if (!leftLimit) {
                             for (int i = leftEdge; i <= rightEdge; i++) {
@@ -365,9 +369,9 @@ public class Evaluator implements BaseEvaluator {
                     }
                 }
             }
-            if (rightEdge < line.length) {
+            if (rightEdge < line.length - 1) {
                 if (line[rightEdge + 1] == ChessType.NONE) {
-                    if (rightEdge < line.length - 1 && line[rightEdge + 2] == type) {
+                    if (rightEdge < line.length - 2 && line[rightEdge + 2] == type) {
                         lineRecord[rightEdge + 2] = SituationType.ANALYZED;
                         for (int i = leftEdge; i <= rightEdge; i++) {
                             lineRecord[i] = SituationType.ANALYZED;
@@ -427,9 +431,9 @@ public class Evaluator implements BaseEvaluator {
                     }
                 }
             }
-            if (rightEdge < line.length) {
+            if (rightEdge < line.length - 1) {
                 if (line[rightEdge + 1] == ChessType.NONE) {
-                    if (rightEdge < line.length - 2 && line[rightEdge + 2] == type && line[rightEdge + 3] == type) {
+                    if (rightEdge < line.length - 3 && line[rightEdge + 2] == type && line[rightEdge + 3] == type) {
                         if (leftSituation == SituationType.SFOUR) {
                             for (int i = leftEdge; i <= rightEdge; i++) {
                                 lineRecord[i] = SituationType.ANALYZED;
@@ -447,31 +451,30 @@ public class Evaluator implements BaseEvaluator {
                             lineRecord[rightEdge + 3] = SituationType.ANALYZED;
                             lineRecord[pos] = SituationType.SFOUR;
                         }
-                    } else if (rightEdge < line.length - 1 && line[rightEdge + 2] == type) {
-                        if (leftSituation == SituationType.SFOUR) {
+                    } else if (rightEdge < line.length - 2 && line[rightEdge + 2] == type) {
+                        if (leftSituation == SituationType.SFOUR && leftEdge > 2) {
                             for (int i = leftEdge; i <= rightEdge; i++) {
                                 lineRecord[i] = SituationType.ANALYZED;
                             }
                             lineRecord[leftEdge - 2] = SituationType.ANALYZED;
                             lineRecord[leftEdge - 3] = SituationType.ANALYZED;
                             lineRecord[pos] = SituationType.SFOUR;
-                        } else if (!leftLimit) {
+                        } else if (!leftLimit && leftEdge > 2) {
                             lineRecord[leftEdge - 2] = SituationType.ANALYZED;
                             lineRecord[leftEdge - 3] = SituationType.ANALYZED;
                             lineRecord[pos] = SituationType.STHREE;
                         } else {
-                            lineRecord[leftEdge - 2] = SituationType.ANALYZED;
-                            lineRecord[leftEdge - 3] = SituationType.ANALYZED;
+                            lineRecord[pos] = SituationType.ANALYZED;
                         }
                     } else {
-                        if (leftSituation == SituationType.SFOUR) {
+                        if (leftSituation == SituationType.SFOUR && leftEdge > 2) {
                             lineRecord[leftEdge - 2] = SituationType.ANALYZED;
                             lineRecord[leftEdge - 3] = SituationType.ANALYZED;
                             for (int i = leftEdge; i <= rightEdge; i++) {
                                 lineRecord[i] = SituationType.ANALYZED;
                             }
                             lineRecord[pos] = SituationType.SFOUR;
-                        } else if (leftSituation == SituationType.STHREE) {
+                        } else if (leftSituation == SituationType.STHREE && leftEdge > 1) {
                             lineRecord[leftEdge - 2] = SituationType.ANALYZED;
                             for (int i = leftEdge; i <= rightEdge; i++) {
                                 lineRecord[i] = SituationType.ANALYZED;
@@ -490,14 +493,14 @@ public class Evaluator implements BaseEvaluator {
                         }
                     }
                 } else {
-                    if (leftSituation == SituationType.SFOUR) {
+                    if (leftSituation == SituationType.SFOUR && leftEdge > 2) {
                         for (int i = leftEdge; i <= rightEdge; i++) {
                             lineRecord[i] = SituationType.ANALYZED;
                         }
                         lineRecord[leftEdge - 3] = SituationType.ANALYZED;
                         lineRecord[leftEdge - 2] = SituationType.ANALYZED;
                         lineRecord[pos] = SituationType.SFOUR;
-                    } else if (leftSituation == SituationType.STHREE) {
+                    } else if (leftSituation == SituationType.STHREE && leftEdge > 1) {
                         for (int i = leftEdge; i <= rightEdge; i++) {
                             lineRecord[i] = SituationType.ANALYZED;
                         }
