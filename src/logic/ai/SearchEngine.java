@@ -1,21 +1,20 @@
 package logic.ai;
-
-import logic.chessboard.CYHChessboard;
 import logic.chessboard.ChessType;
 
 import java.util.ArrayList;
 
 public class SearchEngine implements BaseSearchEngine {
     int maxSearchDepth = 3;
-    CYHChessboard cyhChessboard = new CYHChessboard(15, 15);
     BaseEvaluator evaluator = new Evaluator();
     BaseMoveGenerator baseMoveGenerator = new MoveGenerator();
     ChessMove bestMove;
+    ChessType[][] board;
 
     @Override
     public ChessMove searchABestMove(ChessType[][] board, boolean isWhiteTurn) {
+        this.board = board;
         bestMove = null;
-        NegaSearch(-2000, 2000, maxSearchDepth);
+        NegaSearch(board, -2000, 2000, maxSearchDepth);
         return bestMove;
     }
 
@@ -26,12 +25,9 @@ public class SearchEngine implements BaseSearchEngine {
 
     @Override
     public int isGameOver(ChessType[][] board, int depth) {
-        boolean isWhiteTurn;
-        int score;
-        int i;
-        i = (maxSearchDepth - depth) % 2;
-        isWhiteTurn = i != 0;
-        score = evaluator.evaluate(cyhChessboard.board, isWhiteTurn);
+        int i = (maxSearchDepth - depth) % 2;
+        boolean isWhiteTurn = i != 0;
+        int score = evaluator.evaluate(board, isWhiteTurn);
         if (Math.abs(score) > 8000) {
             return score;
         }
@@ -40,16 +36,16 @@ public class SearchEngine implements BaseSearchEngine {
 
     @Override
     public void makeMove(ChessMove chessMove, ChessType type) {
-        cyhChessboard.board[chessMove.getPos().getRow()][chessMove.getPos().getColumn()] = type;
+        board[chessMove.getPos().getRow()][chessMove.getPos().getColumn()] = type;
     }
 
     @Override
     public void unMakeMove(ChessMove chessMove) {
-        cyhChessboard.board[chessMove.getPos().getRow()][chessMove.getPos().getColumn()] = ChessType.NONE;
+        board[chessMove.getPos().getRow()][chessMove.getPos().getColumn()] = ChessType.NONE;
     }
 
     @Override
-    public int NegaSearch(int alpha, int beta, int depth) {
+    public int NegaSearch(ChessType[][] board, int alpha, int beta, int depth) {
         int side;
         ChessType type;
         boolean isWhiteTurn;
@@ -61,19 +57,19 @@ public class SearchEngine implements BaseSearchEngine {
             isWhiteTurn = false;
             type = ChessType.BLACK;
         }
-        int isGameOver = isGameOver(cyhChessboard.board, depth);
+        int isGameOver = isGameOver(board, depth);
         if (isGameOver != 0) {
             bestMove.setScore(isGameOver);
             return isGameOver;
         }
-        if (depth  == 0) {
-            int score = evaluator.evaluate(cyhChessboard.board, isWhiteTurn);
+        if (depth == 0) {
+            int score = evaluator.evaluate(board, isWhiteTurn);
             return score;
         }
-        ArrayList<ChessMove> moveList = baseMoveGenerator.createPossibleMove(cyhChessboard.board, depth, isWhiteTurn);
+        ArrayList<ChessMove> moveList = baseMoveGenerator.createPossibleMove(board, depth, isWhiteTurn);
         for (int i = 0; i < moveList.size(); i++) {
             makeMove(moveList.get(i), type);
-            int score = -NegaSearch(-alpha, -beta, depth - 1);
+            int score = -NegaSearch(board, -alpha, -beta, depth - 1);
             unMakeMove(moveList.get(i));
             if (score > alpha) {
                 alpha = score;

@@ -178,7 +178,7 @@ public class Evaluator implements BaseEvaluator {
         }
         for (int row = 0; row < ROW_COUNT; row++) {
             for (int column = 0; column < COLUMN_COUNT; column++) {
-                if (board[row][column] == ChessType.NONE) {
+                if (board[row][column] != ChessType.NONE) {
                     if (board[row][column] == ChessType.BLACK) {
                         BValue += posValue[row][column];
                     } else {

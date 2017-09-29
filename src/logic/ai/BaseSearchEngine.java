@@ -19,5 +19,5 @@ interface BaseSearchEngine {
 
     void unMakeMove(ChessMove chessMove);
 
-    int NegaSearch(int alpha, int beta, int depth);
+    int NegaSearch(ChessType[][] board, int alpha, int beta, int depth);
 }
