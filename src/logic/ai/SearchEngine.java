@@ -1,12 +1,12 @@
 package logic.ai;
 
-import java.util.ArrayList;
-
 import logic.chessboard.CYHChessboard;
 import logic.chessboard.ChessType;
 
+import java.util.ArrayList;
+
 public class SearchEngine implements BaseSearchEngine {
-    int maxSearchDepth = 2;
+    int maxSearchDepth = 3;
     CYHChessboard cyhChessboard = new CYHChessboard(15, 15);
     BaseEvaluator evaluator = new Evaluator();
     BaseMoveGenerator baseMoveGenerator = new MoveGenerator();
@@ -15,7 +15,7 @@ public class SearchEngine implements BaseSearchEngine {
     @Override
     public ChessMove searchABestMove(ChessType[][] board, boolean isWhiteTurn) {
         bestMove = null;
-        NegaSearch(-20000, 20000, maxSearchDepth);
+        NegaSearch(-2000, 2000, maxSearchDepth);
         return bestMove;
     }
 
@@ -66,7 +66,7 @@ public class SearchEngine implements BaseSearchEngine {
             bestMove.setScore(isGameOver);
             return isGameOver;
         }
-        if (depth <= 0) {
+        if (depth  == 0) {
             int score = evaluator.evaluate(cyhChessboard.board, isWhiteTurn);
             return score;
         }
