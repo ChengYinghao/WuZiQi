@@ -113,85 +113,64 @@ public class CYHChessboard implements Chessboard {
      * @return 是否因为该落子而胜利
      */
     private boolean checkMovementWin(int row, int column) {
-        int count = 1;
-        //检查横向左边
         ChessType thisChess = board[row][column];
+        
+        //检查横向
+        int count = 1;
         for (int i = 1; i < 5; i++) {
             if (column - i < 0) break;
             if (board[row][column - i] != thisChess) break;
             count++;
         }
-        //检查横向右边
         for (int i = 1; i < 5; i++) {
             if (column + i >= getColumnCount()) break;
             if (get(row, column + i) != thisChess) break;
             count++;
         }
-        if (count >= 5) {
-            return true;
-        }
+        if (count >= 5) return true;
+        
+        //检查纵向
         count = 1;
-        //检查纵向上边
         for (int i = 1; i < 5; i++) {
             if (row - i < 0 || row - i >= getRowCount()) break;
             if (get(row - i, column) != thisChess) break;
             count++;
         }
-        //检查纵向下边
         for (int i = 1; i < 5; i++) {
             if (row + i >= getRowCount()) break;
             if (get(row + i, column) != thisChess) break;
             count++;
         }
-        if (count >= 5) {
-            return true;
-        }
-
+        if (count >= 5) return true;
+        
+        //检查左上右下
         count = 1;
-        //检查左上角
         for (int i = 1; i < 5; i++) {
             if (row - i < 0 || column - i < 0) break;
             if (get(row - i, column - i) != thisChess) break;
             count++;
         }
-        //检查右下角
-        for (
-                int i = 1;
-                i < 5; i++)
-
-        {
-            if (row + i >= getRowCount() || column >= getColumnCount()) break;
+        for (int i = 1; i < 5; i++) {
+            if (row + i >= getRowCount() || column + i >= getColumnCount()) break;
             if (get(row + i, column + i) != thisChess) break;
             count++;
         }
-        if (count >= 5)
-
-        {
-            return true;
-        }
-
+        if (count >= 5) return true;
+        
+        //检查左下右上
         count = 1;
-        //检查左下角
-        for (
-                int i = 1;
-                i < 5; i++)
-
-        {
+        for (int i = 1; i < 5; i++) {
             if (row + i >= getRowCount() || column - i < 0) break;
             if (get(row + i, column - i) != thisChess) break;
             count++;
         }
-        //检查右上角
-        for (
-                int i = 1;
-                i < 5; i++)
-
-        {
+        for (int i = 1; i < 5; i++) {
             if (row - i < 0 || column + i >= getColumnCount()) break;
             if (get(row - i, column + i) != thisChess) break;
             count++;
         }
         return count >= 5;
+    
     }
 
     /**
