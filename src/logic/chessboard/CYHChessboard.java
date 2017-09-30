@@ -25,7 +25,7 @@ public class CYHChessboard implements Chessboard {
         return columnCount;
     }
 
-    public ChessType[][] board;
+    private ChessType[][] board;
 
     @NotNull
     @Override
