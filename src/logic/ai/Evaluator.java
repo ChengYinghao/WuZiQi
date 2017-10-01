@@ -45,7 +45,6 @@ public class Evaluator implements BaseEvaluator {
                 for (int k = 0; k < 4; k++) {
                     if (analysis[row][column][k] != null) {
                         if (board[row][column] == ChessType.WHITE) {
-                            System.out.println(analysis[row][column][k]);
                             switch (analysis[row][column][k]) {
                                 case FIVE:
                                     analysisRecord[0][SituationType.FIVE.ordinal()]++;
@@ -280,7 +279,7 @@ public class Evaluator implements BaseEvaluator {
                 lineRecord[i] = SituationType.ANALYZED;
             }
             return lineRecord;
-        }else{
+        } else {
             for (int i = 0; i < line.length; i++) {
                 lineRecord[i] = SituationType.UNANALYZED;
             }
@@ -304,16 +303,18 @@ public class Evaluator implements BaseEvaluator {
         int leftRange = leftEdge;
         int rightRange = rightEdge;
         while (leftRange > 0) {
-            if (line[leftRange - 1] != ChessType.NONE && line[leftRange] != type) {
+            if (line[leftRange - 1] == ChessType.NONE) {
+                leftRange--;
+            } else {
                 break;
             }
-            leftRange--;
         }
         while (rightRange < line.length - 1) {
-            if (line[rightRange + 1] != ChessType.NONE && line[rightRange + 1] != type) {
+            if (line[rightRange + 1] == ChessType.NONE) {
+                rightRange++;
+            } else {
                 break;
             }
-            rightRange++;
         }
         //该行不可能五子连珠
         if (rightRange - leftRange < 4) {
@@ -432,7 +433,7 @@ public class Evaluator implements BaseEvaluator {
                     }
                 }
             }
-            if (rightEdge < line.length- 1) {
+            if (rightEdge < line.length - 1) {
                 if (line[rightEdge + 1] == ChessType.NONE) {
                     if (rightEdge < line.length - 3 && line[rightEdge + 2] == type && line[rightEdge + 3] == type) {
                         if (leftSituation == SituationType.SFOUR) {
@@ -520,8 +521,10 @@ public class Evaluator implements BaseEvaluator {
                 }
             }
         }
-        for (int i = leftEdge; i <= rightEdge; i++) {
-            lineRecord[i] = SituationType.ANALYZED;
+        else {
+            for (int i = leftEdge; i <= rightEdge; i++) {
+                lineRecord[i] = SituationType.ANALYZED;
+            }
         }
         return lineRecord;
     }

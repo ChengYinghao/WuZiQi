@@ -59,7 +59,6 @@ public class SearchEngine implements BaseSearchEngine {
         }
         int isGameOver = isGameOver(board, depth);
         if (isGameOver != 0) {
-            bestMove.setScore(isGameOver);
             return isGameOver;
         }
         if (depth == 0) {
